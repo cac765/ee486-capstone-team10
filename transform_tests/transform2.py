@@ -92,7 +92,7 @@ def displayImage( img, img_name="", title="image",
 def main():
     """Main function to execute."""
     # Load and display original images
-    edge2 = cv2.imread( "edge2.jpg" )
+    edge2 = cv2.imread( "test.jpg" )
     edge5 = cv2.imread( "edge5.jpg" )
     displayImage( edge2, title="edge2" )
     displayImage( edge5, title="edge5" )
