@@ -18,7 +18,7 @@
 # This code is based off the EdjeElectronics Tutorial at:
 # https://github.com/EdjeElectronics/TensorFlow-Lite-Object-Detection-on-Android-and-Raspberry-Pi
 #
-# The script has been modified to fit the specific needs of the Capstone Team.
+# The script has been modified to fit the specific needs of the Capstone Team
 ################################################################################
 
 # Import packages
