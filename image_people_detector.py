@@ -116,8 +116,8 @@ if ground_truth:
             source_truth = np.float32( ground_truths[DEV_ID]["source"] )
             dest_truth = np.float32( ground_truths[DEV_ID]["destination"] )
             transform_matrix = getTransformMatrix( source_truth, dest_truth )
-    except error:
-        logging.ERROR( "Error collecting ground truth data." )
+    except Exception as error:
+        logging.error( "Error collecting ground truth data." )
         print( error )
         exit(1)
     
@@ -259,7 +259,7 @@ while recording:
             cv2.putText(frame, label, (xmin, label_ymin-7), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 0), 2) # Draw label text
 
             # Count for People and get their locations
-            if ( object_name == "person" or True ):
+            if ( object_name == "person" ):
                 num_occupants += 1
                 location = getLocation( (xmin, ymin), (xmax, ymax) )
                 locations.append( location )
@@ -274,7 +274,7 @@ while recording:
 
     # Check for broker connection before publishing transformed locations
     if broker_ip:
-        edge.publish( mqtt_topic, locations, qos=2, retain=False )
+        edge.publish( mqtt_topic, str(locations), qos=2, retain=False )
     # If no broker, stop recording
     else:
         recording = False
@@ -283,6 +283,7 @@ while recording:
 
     # Check for display debugging
     if show_display:
+        print( frame.shape )
         # Draw occupant number in corner of screen
         cv2.putText(frame, 'PEOPLE: {}'.format(num_occupants),(10,25),
                     cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)

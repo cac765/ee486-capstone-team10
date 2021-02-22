@@ -92,7 +92,7 @@ def displayImage( img, img_name="", title="image",
 def main():
     """Main function to execute."""
     # Load and display original images
-    edge2 = cv2.imread( "test.jpg" )
+    edge2 = cv2.imread( "edge2.jpg" )
     edge5 = cv2.imread( "edge5.jpg" )
     displayImage( edge2, title="edge2" )
     displayImage( edge5, title="edge5" )
@@ -188,8 +188,82 @@ def main():
     plot = plotGroundTruthLocations( plot, [new_locB], size=25, color='y' )
     plot = plotGroundTruthLocations( plot, [new_locC], size=25, color='p' )
     displayImage( plot, title="top view plot" )
+
+def testing():
+    """An open ended function used for testing."""
+    test2 = cv2.imread( "test2.jpg" )
+    test5 = cv2.imread("test5.jpg")
+    test2_shape = test2.shape
+    test5_shape = test5.shape
+    print("test2: ", test2_shape )
+    print("test5: ", test5_shape)
+
+    source_edge2 = getGroundTruthLocations( [258,293],[614,292],[145,477],
+                                            [724,476] ) #v3
+    source_edge5 = getGroundTruthLocations( [186,268],[510,279],[80,430],
+                                            [577,442] ) #v3
+    dest_edge2 = getGroundTruthLocations( [246,15],[531,15],[246,428],
+                                          [531,428] ) #v3 
+    dest_edge5 = getGroundTruthLocations( [15,15],[260,15],[15,375],
+                                          [260,375] ) #v3
+    matrix_edge2 = getTransformMatrix( source_edge2, dest_edge2 )
+    matrix_edge5 = getTransformMatrix( source_edge5, dest_edge5 )
+
+    test2 = plotGroundTruthLocations( test2, source_edge2, size=5, color='c' )
+    test2 = plotGroundTruthLocations( test2, dest_edge2, size=5, color='y' )
+    locV2 = (439,320)
+    locW2 = (21,318)
+    locX2 = (194,403)
+    locY2 = (348,331)
+    locZ2 = (167,323)
+    test2_points = [ locV2, locW2, locX2, locY2, locZ2 ]
+    test2 = plotGroundTruthLocations( test2, test2_points, size=5, color='r' )
+    displayImage( test2, title="test2" )
+
+    test5 = plotGroundTruthLocations( test5, source_edge5, size=5, color='c' )
+    test5 = plotGroundTruthLocations( test5, dest_edge5, size=5, color='y' )
+    locV5 = (710,313)
+    locW5 = (264,300)
+    locX5 = (545,400)
+    locY5 = (630,326)
+    locZ5 = (423,311)
+    test5_points = [ locV5, locW5, locX5, locY5, locZ5 ]
+    test5 = plotGroundTruthLocations( test5, test5_points, size=5, color='r' )
+    displayImage( test5, title="test5" )
+
+    test2_topview = getTopViewTransform( test2, matrix_edge2 )
+    test5_topview = getTopViewTransform( test5, matrix_edge5 )
+    displayImage( test2_topview, title="edge2_topview" )
+    displayImage( test5_topview, title="edge5_topview" )
+
+    new_loc2 = []
+    new_loc5 = []
+
+    for loc in test2_points:
+        new_loc = transformCentroidLocation( loc, matrix_edge2 )
+        new_loc2.append( new_loc )
+
+    for loc in test5_points:
+        new_loc = transformCentroidLocation( loc, matrix_edge5 )
+        new_loc5.append( new_loc )
+
+    print( new_loc2 )
+    print( new_loc5 )
+    print( test5_topview.shape, test2_topview.shape )
+
+    test2_topview = plotGroundTruthLocations( test2_topview, new_loc2,
+                                              size=5, color='p' )
+    test5_topview = plotGroundTruthLocations( test5_topview, new_loc5,
+                                              size=5, color='p' )
+    displayImage( test2_topview, title="edge2_topview" )
+    displayImage( test5_topview, title="edge5_topview" )
+
+    plot = np.zeros( test5_topview.shape, dtype=np.uint8 )
+    plot = plotGroundTruthLocations( plot, new_loc2, size=5, color='g' )
+    plot = plotGroundTruthLocations( plot, new_loc5, size=5, color='r' )
+    displayImage( plot, title="plot" )
     
 if __name__ == "__main__":
-    main()
-        
+    #main()
+    testing()   
         
