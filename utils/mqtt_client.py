@@ -70,6 +70,7 @@ class MQTTClient:
         """
         self.broker_ip = broker_ip
         self.client_name = client_name
+        self.msg_queue = []
 
         self.client = mqtt.Client( client_name )
 
@@ -112,6 +113,24 @@ class MQTTClient:
         """
         logging.info( "Publishing to topic %s" %topic )
         self.client.publish( topic, data, qos = qos, retain = retain )
+
+    def loop_start( self ):
+        """
+          Start the loop thread.
+        """
+        self.client.loop_start()
+
+    def loop_stop( self ):
+        """
+          Stop the loop thread.
+        """
+        self.client.loop_stop()
+
+    def loop_forever( self ):
+        """
+          Begin infinite loop.
+        """
+        self.client.loop_forever()
 
 
 
