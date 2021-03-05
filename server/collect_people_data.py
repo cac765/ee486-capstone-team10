@@ -26,6 +26,7 @@ import ast
 sys.path.append( "../utils" )
 from mqtt_client import *
 from density_clustering import *
+from sql_utils import *
 
 # Instantiate the logger
 logging.basicConfig( format='%(levelname)s: %(message)s', level=logging.INFO )
@@ -55,6 +56,10 @@ parser.add_argument('--subscribe', help='MQTT topic to subscrib to. ' + \
 parser.add_argument('--camera-count', help='Number of total camera devices' + \
                               'communicating to the server for this detection',
                     default=2)
+parser.add_argument('--group-suffix', help='Suffix Group for SQL Authentication.',
+                    default='eecapstone')
+parser.add_argument('--sql-table', help='Name of SQL Table to insert data into.',
+                    default='occupancy')
 
 # Parse arguments
 args = parser.parse_args()
@@ -63,6 +68,8 @@ broker_ip = args.broker_ip
 client_name = args.client_name
 subscribe_topic = args.subscribe
 num_cameras = int(args.camera_count)
+suffix_group = args.group_suffix
+table_name = args.sql_table
 
 # Validate input arguments
 if not num_cameras > 0:
@@ -113,8 +120,8 @@ total_occupants = Count_Clusters( all_locations )
 print( "Total occupants detected: ", total_occupants )
 
 # Insert data into SQL table
-# IN PROGRESS  
-
+sql_values = ["current_timestamp()", 196, total_occupants]
+insert_into_sql(suffix_group, table_name, values)
 
 print("DONE")   
     
