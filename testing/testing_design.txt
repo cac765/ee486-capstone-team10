@@ -1,0 +1,47 @@
+|===================================================================================|
+|                                  TESTING DESIGN                                   |
+|===================================================================================|
+|                                                                                   |
+| * Need to conduct 4 total tests                                                   |
+| * At least 1 UTM, at least 1 UTS, and exactly 1 integration                       |
+|                                                                                   |
+| * UTM Tests                                                                       |
+|                                                                                   |
+|     # People Detection with still images                                          |
+|         # Input: People in the room                                               |
+|         # Expected Result: same as input                                          |
+|         # Cases: various locations in the room (corners, middle, behind tables)   |
+|                  different postures (sitting, standing, laying, whatever)         |
+|         # Test both cameras, both have to pass                                    |
+|         # PASS: Everyone is detected successfully                                 |
+|                                                                                   |
+| * UTS Tests                                                                       |
+|                                                                                   |
+|     # Testing wireless communication streams                                      |
+|         # Server sends UPDATE command                                             |
+|         # Cameras receive update command and do detections                        |
+|         # Cameras send data back to server                                        |
+|         # Output would be the top view translation from cameras                   |
+|         # PASS: If server receives data from both cameras                         |
+|                                                                                   |
+|     # Minimum Distance with Clustering (Test against 3ft apart)                   |
+|         # Mark 2 locations on floor 5ft apart                                     |
+|         # Take a snapshot with script                                             |
+|         # Hover over 2 locations to get pixel location values                     |
+|         # Pass those locations to clustering and check if result is 2             |
+|         # Repeat for smaller distances until fail                                 |
+|         # PASS: Works at a minimum of 3ft apart in middle of room                 |
+|                                                                                   |
+| * Integration Test                                                                |
+|                                                                                   |
+|     # Full data string from people detection to total occupancy                   |
+|         # Server sends UPDATE command                                             |
+|         # Detect people from the cameras                                          |
+|         # Cameras do top view translation                                         |
+|         # Cameras send data to server                                             |
+|         # Server receives locations from both cameras                             |
+|         # Server runs clustering on locations                                     |
+|         # Server inserts data into SQL table                                      |
+|         # PASS: User can see the correct occupancy number on Grafana interface    |
+|                                                                                   |
+|===================================================================================|
