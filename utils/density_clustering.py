@@ -4,11 +4,9 @@ from sklearn.cluster import DBSCAN
 from sklearn.preprocessing import StandardScaler
 
 def Count_Clusters( X ):
-    # Transform input data
-    X = StandardScaler().fit_transform(X)
 
     # Compute DBSCAN
-    db = DBSCAN(eps=0.3, min_samples=1).fit(X) 
+    db = DBSCAN(eps=0.1*480, min_samples=1).fit(X) 
     core_samples_mask = np.zeros_like(db.labels_, dtype=bool)
     core_samples_mask[db.core_sample_indices_] = True
     labels = db.labels_
