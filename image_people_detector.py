@@ -1,9 +1,9 @@
 ######## Pi-Camera Object Detection Using TensorFlow Trained Classifier ########
 #
-# Author:  Corey Cline
-# Members: Evan Genuise
-#          Sara Barraclough
-#          Vitaliy Kolontayev
+# Authors:  Corey Cline
+#           Evan Genuise
+#           Sara Barraclough
+#           Vitaliy Kolontayev
 # Date: 02/20/2021
 # Description:
 # The primary script for the EE486 Capstone Team 10 - People Counting People
