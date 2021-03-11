@@ -283,7 +283,7 @@ while recording:
 
     # Check for display debugging
     if show_display:
-        print( frame.shape )
+        print( "Resolution: ", frame.shape )
         # Draw occupant number in corner of screen
         cv2.putText(frame, 'PEOPLE: {}'.format(num_occupants),(10,25),
                     cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)

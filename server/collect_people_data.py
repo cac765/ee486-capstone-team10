@@ -121,7 +121,8 @@ print( "Total occupants detected: ", total_occupants )
 
 # Insert data into SQL table
 sql_values = ["current_timestamp()", 196, total_occupants]
-insert_into_sql(suffix_group, table_name, values)
+#insert_into_sql(suffix_group, table_name, sql_values)
+print("SQL DATA: ", sql_values)
 
 print("DONE")   
     
