@@ -196,6 +196,7 @@ while recording:
         # Wait infinitely for the UPDATE command to be received from the broker
         cmd_received = False
         while not cmd_received:
+            logging.info("Waiting for UPDATE Command...")
             # Check if the message queue has messages
             if len( edge.msg_queue ) > 0:
                 # Grab the message from the queue
@@ -203,7 +204,7 @@ while recording:
                 # Check if message was the UPDATE command, exit from the loop
                 if incoming_msg == "UPDATE":
                     cmd_received = True
-                    
+
         # Load the image from the stream and reset the command flag
         frame1 = camerastream.read()
         cmd_received = False
@@ -283,7 +284,7 @@ while recording:
 
     # Check for display debugging
     if show_display:
-        print( "Resolution: ", frame.shape )
+        print( frame.shape )
         # Draw occupant number in corner of screen
         cv2.putText(frame, 'PEOPLE: {}'.format(num_occupants),(10,25),
                     cv2.FONT_HERSHEY_SIMPLEX,1,(255,255,0),2,cv2.LINE_AA)
@@ -292,6 +293,9 @@ while recording:
     # Press 'q' to quit
     if cv2.waitKey(1) == ord('q'):
         break
+
+    # Truncate the frame to prepare for another read
+    camerastream.clear()
 
 camerastream.stop()
 print("Done")

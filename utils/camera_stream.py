@@ -16,6 +16,10 @@ class CameraStream:
         self.camera.capture( self.stream, format='bgr' )
         return self.stream.array
 
+    def clear( self ):
+        # Truncate the output stream to be ready for another read
+        self.stream.truncate(0)
+
     def stop( self ):
         # Finalize the state of the camera and release the camera resources
         self.camera.close()
