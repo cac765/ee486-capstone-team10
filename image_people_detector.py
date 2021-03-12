@@ -194,9 +194,9 @@ recording = True
 while recording:
     if broker_ip:
         # Wait infinitely for the UPDATE command to be received from the broker
+        logging.info("Waiting for UPDATE Command...")
         cmd_received = False
         while not cmd_received:
-            logging.info("Waiting for UPDATE Command...")
             # Check if the message queue has messages
             if len( edge.msg_queue ) > 0:
                 # Grab the message from the queue
