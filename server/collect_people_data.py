@@ -21,6 +21,7 @@ import sys
 import argparse
 import logging
 import ast
+import time
 
 # Parent Directory imports
 sys.path.append( "../utils" )
@@ -60,6 +61,9 @@ parser.add_argument('--group-suffix', help='Suffix Group for SQL Authentication.
                     default='eecapstone')
 parser.add_argument('--sql-table', help='Name of SQL Table to insert data into.',
                     default='occupancy')
+parser.add_argument('--interval', help='Interval in seconds to publish \
+                                       to MQTT topic. Default is 60s.',
+                    default=60)
 
 # Parse arguments
 args = parser.parse_args()
@@ -70,6 +74,7 @@ subscribe_topic = args.subscribe
 num_cameras = int(args.camera_count)
 suffix_group = args.group_suffix
 table_name = args.sql_table
+delay_interval = args.interval
 
 # Validate input arguments
 if not num_cameras > 0:
@@ -81,48 +86,57 @@ store = MQTTClient( broker_ip, client_name )
 store.client.on_message = on_message
 store.connect()
 
-# Begin the thread for MQTT communication, subscribe to topic, publish UPDATE
+# Begin the thread for MQTT, subscribe to topic, publish UPDATE
 store.loop_start()
 store.subscribe( "test/occupancy")
-# Publish to topic, QoS - quality of service: double checking, do not retain 
-store.publish( "eecapstone/snapshot", "UPDATE", qos = 2, retain = False )
 
-# Initiate flag for receiving data from all cameras
-data_received = False
+while True:
+    try:
+        # Publish to topic
+        store.publish( "eecapstone/snapshot", "UPDATE", qos = 2, retain = False )
 
-# Begin infinite loop until data from all cameras are received
-while not data_received:
-    # Check if the message queue has messages equal to number of cameras
-        if len( store.msg_queue ) == num_cameras:
-            # Grab the message from the queue
-            incoming_data1 = store.msg_queue.pop()
-            incoming_data2 = store.msg_queue.pop()
-            # Data captured, break from the loop
-            data_received = True
+        # Initiate flag for receiving data from all cameras
+        data_received = False
 
-# Validate data are lists before appending
-try:
-    data1_list = ast.literal_eval( incoming_data1 )
-    data2_list = ast.literal_eval( incoming_data2 )
-except Exception as error:
-    logging.error("[-] Error collecting input data from MQTT suscribe. " + \
-                    "Data collected was not in list format.")
-    print( error )
-    exit(1)
+        # Begin infinite loop until data from all cameras are received
+        while not data_received:
+            # Check if message queue has messages equal to number of cameras
+                if len( store.msg_queue ) == num_cameras:
+                    # Grab the message from the queue
+                    incoming_data1 = store.msg_queue.pop()
+                    incoming_data2 = store.msg_queue.pop()
+                    # Data captured, break from the loop
+                    data_received = True
 
-# Display from log and combine all occupant locations into one list
-print( "Incoming Data 1: ", data1_list )
-print( "Incoming Data 2: ", data2_list )
-all_locations = data1_list + data2_list
+        # Validate data are lists before appending
+        try:
+            data1_list = ast.literal_eval( incoming_data1 )
+            data2_list = ast.literal_eval( incoming_data2 )
+        except Exception as error:
+            logging.error("[-] Error collecting input data from MQTT " + \
+                          "subscribe. Data collected was not in list format.")
+            print( error )
+            exit(1)
 
-# Pass total locations list to clustering algorithm
-total_occupants = Count_Clusters( all_locations )
-print( "Total occupants detected: ", total_occupants )
+        # Display from log and combine all occupant locations into one list
+        logging.info( f"Incoming Data 1: {data1_list}" )
+        logging.info( f"Incoming Data 2: {data2_list}" )
+        all_locations = data1_list + data2_list
 
-# Insert data into SQL table
-sql_values = ["current_timestamp()", 196, total_occupants]
-insert_into_sql(suffix_group, table_name, sql_values)
-print("SQL DATA: ", sql_values)
+        # Pass total locations list to clustering algorithm
+        total_occupants = Count_Clusters( all_locations )
+        logging.info( f"Total occupants detected: {total_occupants}" )
 
-print("DONE")   
+        # Insert data into SQL table
+        sql_values = ["current_timestamp()", 196, total_occupants]
+        insert_into_sql(suffix_group, table_name, sql_values)
+        logging.info(f"SQL DATA: {sql_values}")
+
+        # Delay for next UPDATE publish
+        time.sleep(delay_interval)
+
+    # Except keyboard interrupt to exit
+    except KeyboardInterrupt:
+        logging.error("Keyboard Interrupt: Exiting with status 2...")
+        exit(2)
     
