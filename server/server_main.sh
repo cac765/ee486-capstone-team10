@@ -12,5 +12,5 @@
 ############################################################################
 
 python3 ~/repos/ee486-capstone-team10/server/collect_people_data.py \
---broker-ip store1.iot.nau.edu \
+--broker-ip <INSERT_BROKER> \
 --client-name store1

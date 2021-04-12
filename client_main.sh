@@ -17,6 +17,6 @@ python3 image_people_detector.py \
 --modeldir tflite1/Sample_TFLite_model \
 --ground-truth config/ground_truth.json \
 --device-id $edge \
---broker-ip store1.iot.nau.edu \
+--broker-ip <INSERT_BROKER> \
 --client-name $edge
 
